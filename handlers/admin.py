@@ -1,6 +1,6 @@
-from aiogram import Router, Bot, F
-from aiogram.types import Message
+from aiogram import Router
 from aiogram.filters import Command, CommandObject
+from aiogram.types import Message
 
 import config
 from middleware.admin import AdminMiddleware

@@ -1,17 +1,11 @@
-import openai
-import httpx
-
 import os
 
-import config
-from .enums import AIRole, GPTRole, GPTModel
+import openai
 
+import config
 from classes.file_manager import FileManager
 from classes.resources_paths import AI_PROMPTS_PATH
-
-
-# from .enums import GPTRole, Extensions
-# from .resource import ResourcePath
+from .enums import AIRole, GPTRole, GPTModel
 
 
 class GPTMessage:

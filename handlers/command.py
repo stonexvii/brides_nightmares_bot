@@ -1,40 +1,31 @@
-from aiogram import Router, Bot, F
-from aiogram.types import Message
-from aiogram.filters import Command
+import os
 
-from ai_gpt import ai_client
-from ai_gpt.enums import AIRole
-import config
-from keyboards.inline_keyboards import ikb_moderator_menu
-from text import bot_messages
+from aiogram import Router
+from aiogram.filters import Command
+from aiogram.types import Message
+
+from classes.file_manager import FileManager
+from classes.resources_paths import TEXT_MESSAGES
 
 command_router = Router()
 
 
-# @command_router.channel_post()
-# async def channel_post_catch(message: Message):
-#     for key, item in dict(message).items():
-#         if item:
-#             print(key, item)
-
-
 @command_router.message(Command('start'))
 async def command_start(message: Message):
-    welcome_message = await ai_client.request(AIRole.WELCOME, f'Привет, меня зовут {message.from_user.full_name}')
     await message.answer(
-        text=welcome_message,
+        text=FileManager.read_txt(os.path.join(TEXT_MESSAGES, 'bot_start')),
     )
 
 
 @command_router.message(Command('rules'))
 async def command_start(message: Message):
     await message.answer(
-        text=bot_messages.RULES,
+        text=FileManager.read_txt(os.path.join(TEXT_MESSAGES, 'bot_rules')),
     )
 
 
 @command_router.message(Command('help'))
 async def command_start(message: Message):
     await message.answer(
-        text=bot_messages.HELP,
+        text=FileManager.read_txt(os.path.join(TEXT_MESSAGES, 'bot_help')),
     )

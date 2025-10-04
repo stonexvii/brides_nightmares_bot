@@ -1,8 +1,8 @@
-from aiogram import Router, Bot, F
-from aiogram.types import Message, CallbackQuery
-from aiogram.fsm.context import FSMContext
-
 from datetime import datetime, timedelta
+
+from aiogram import Router, Bot
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
 
 import config
 from fsm.states import CallbackState

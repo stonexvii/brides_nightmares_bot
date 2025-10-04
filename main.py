@@ -1,10 +1,10 @@
-from aiogram import Bot, Dispatcher
-
 import asyncio
 
-from handlers import main_router
+from aiogram import Bot, Dispatcher
+
 import config
 import misc
+from handlers import main_router
 
 
 async def start_bot():
