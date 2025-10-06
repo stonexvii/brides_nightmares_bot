@@ -4,8 +4,8 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 
-from classes.file_manager import FileManager
 from classes.enums import ResourcesPath
+from classes.file_manager import FileManager
 
 command_router = Router()
 

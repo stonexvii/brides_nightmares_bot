@@ -1,12 +1,10 @@
-import os
-
 from aiogram import Router
 from aiogram.filters import Command, CommandObject
 from aiogram.types import Message
 
 import config
-from classes.file_manager import FileManager
 from classes.enums import ResourcesPath
+from classes.file_manager import FileManager
 from middleware.admin import AdminMiddleware
 from text.moderator_text import Minutes
 

@@ -1,16 +1,24 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from classes.inline_button import Button
-from text.moderator_text import BUTTONS_TEXT
+from .callback_data import ModeratorCallback
 
 
-def ikb_moderator_menu(user_tg_id: int):
+def ikb_moderator_rework():
     keyboard = InlineKeyboardBuilder()
-    buttons = [Button(text, callback, user_tg_id) for callback, text in BUTTONS_TEXT.items()]
+    buttons = [
+        ('Исправить и отправить', ModeratorCallback(
+            button='accept',
+        ),
+         ),
+        ('Отмена', ModeratorCallback(
+            button='cancel',
+        ),
+         ),
+    ]
     for button in buttons:
         keyboard.button(
-            text=button.text,
-            callback_data=button.callback,
+            text=button[0],
+            callback_data=button[1],
         )
     keyboard.adjust(1)
     return keyboard.as_markup()

@@ -1,9 +1,13 @@
 import json
 
+from aiogram import Bot
+from aiogram.fsm.context import FSMContext
+
 import config
-from .ai_client import ChatGPT
 from classes.enums import ResourcesPath
 from classes.file_manager import FileManager
+from keyboards.inline_keyboards import ikb_moderator_rework
+from .ai_client import ChatGPT
 from .enums import GPTRole
 
 
@@ -27,7 +31,7 @@ class AIDialog:
         self.update(GPTRole.USER, message)
         response = await ChatGPT().request(self.message_list)
         json_data = json.loads(response)
-        self.update(GPTRole.CHAT, json_data)
+        self.update(GPTRole.CHAT, response)
         return json_data
 
     def update(self, role: GPTRole, message: str):
@@ -37,12 +41,39 @@ class AIDialog:
         }
         self.message_list.append(message)
 
-    def analyze_response(self, response: dict[str, str]):
+    async def answer(self, bot: Bot, state: FSMContext, response: dict[str, str]):
         if response['status'] == 'CORRECT':
-            result = {
-                'chat_id': self.CHANNEL_ID,
-                'text': response['content']
-            }
+            await bot.send_message(
+                chat_id=self.CHANNEL_ID,
+                text=response['content'],
+            )
+            await bot.send_message(
+                chat_id=self.user_id,
+                text=response['comment'],
+            )
+            await state.clear()
+        elif response['status'] == 'INCORRECT_CAN':
+            await bot.send_message(
+                chat_id=self.user_id,
+                text=response['comment'],
+                reply_markup=ikb_moderator_rework(),
+            )
+        elif response['status'] == 'INCORRECT_NO':
+            await bot.send_message(
+                chat_id=self.user_id,
+                text=response['comment'],
+            )
+        elif response['status'] == 'INFO':
+            await bot.send_message(
+                chat_id=self.user_id,
+                text=response['comment'],
+            )
+        elif response['status'] == 'ADMIN':
+            await bot.send_message(
+                chat_id=self.ADMIN_ID,
+                text=response['comment'] + '\n\n' + response['content'],
+            )
+            await state.clear()
 
     def to_json(self):
         return json.dumps(self.message_list, ensure_ascii=False, indent=4)
