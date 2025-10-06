@@ -1,7 +1,11 @@
+import os
+
+
 class FileManager:
 
     @staticmethod
-    def read_txt(path: str):
+    def read_txt(*args):
+        path = os.path.join(*args)
         if not path.endswith('.txt'):
             path += '.txt'
         with open(path, 'r', encoding='UTF-8') as file:
@@ -13,7 +17,10 @@ class FileManager:
             return file.read()
 
     @staticmethod
-    def write_txt(path: str, data: str):
+    def write_txt(*args, data: str):
+        path = os.path.join(*args)
+        if not path.endswith('.txt'):
+            path += '.txt'
         with open(path, 'w', encoding='UTF-8') as file:
             file.write(data)
 

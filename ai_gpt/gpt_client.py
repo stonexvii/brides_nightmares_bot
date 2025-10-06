@@ -1,30 +1,24 @@
-import os
-
 import openai
+import json
 
 import config
+from classes.enums import ResourcesPath
 from classes.file_manager import FileManager
-from classes.resources_paths import AI_PROMPTS_PATH
-from .enums import AIRole, GPTRole, GPTModel
+from .enums import GPTRole, GPTModel
 
 
 class GPTMessage:
 
-    def __init__(self, prompt: str):
-        self._prompt_name = prompt
-        self.message_list = self._init_message()
+    def __init__(self, message_list: list[dict[str, str]] | None = None):
+        self.message_list = self._init_message() if message_list is None else message_list
 
-    def _init_message(self) -> list[dict[str, str]]:
+    @staticmethod
+    def _init_message() -> list[dict[str, str]]:
         message = {
             'role': GPTRole.SYSTEM.value,
-            'content': self._load_prompt(),
+            'content': FileManager.read_txt(ResourcesPath.AI_PROMPTS_PATH.value, ResourcesPath.AI_MODERATOR.value),
         }
         return [message]
-
-    def _load_prompt(self) -> str:
-        prompt_path = os.path.join(AI_PROMPTS_PATH, self._prompt_name)
-        prompt = FileManager.read_txt(prompt_path)
-        return prompt
 
     def update(self, role: GPTRole, message: str):
         message = {
@@ -32,6 +26,15 @@ class GPTMessage:
             'content': message,
         }
         self.message_list.append(message)
+
+    def to_json(self):
+        return json.dumps(self.message_list, ensure_ascii=False, indent=4)
+
+    @classmethod
+    def from_json(cls, json_data: str):
+        data = json.loads(json_data)
+        print(data)
+        return data
 
 
 class ChatGPT:
@@ -55,18 +58,20 @@ class ChatGPT:
         )
         return gpt_client
 
-    async def request(self, ai_role: AIRole, user_request) -> str:
-        message_list = GPTMessage(ai_role.value)
-        message_list.update(GPTRole.USER, user_request)
+    async def request(self, ai_role: GPTRole, user_request: str, message_list: GPTMessage | None = None) -> str:
+        message_list = GPTMessage() if message_list is None else message_list
+        message_list.update(ai_role, user_request)
         response = await self._client.chat.completions.create(
             messages=message_list.message_list,
             model=self._model,
         )
-        return response.choices[0].message.content
+        ai_response = response.choices[0].message.content
+        message_list.update(GPTRole.CHAT, ai_response)
+        return ai_response
 
-    async def voice_transcribe(self, voice, model: str = 'whisper-1'):
-        msg_text = await self._client.audio.transcriptions.create(
-            model=model,
-            file=voice,
-        )
-        print(msg_text)
+    # async def voice_transcribe(self, voice, model: str = 'whisper-1'):
+    #     msg_text = await self._client.audio.transcriptions.create(
+    #         model=model,
+    #         file=voice,
+    #     )
+    #     print(msg_text)

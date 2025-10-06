@@ -9,8 +9,8 @@ from .fsm import fsm_router
 main_router = Router()
 
 main_router.include_routers(
-command_router,
     admin_router,
+    command_router,
     fsm_router,
     callback_router,
     user_router,

@@ -15,8 +15,10 @@ fsm_router = Router()
 @fsm_router.message(CallbackState.timer)
 async def check_spam(message: Message, bot: Bot, state: FSMContext):
     current_time = datetime.now()
-    message_time = await state.get_value('message_time')
-    elapsed_time = current_time - message_time
+    state_data = await state.get_data()
+    elapsed_time = current_time - state_data['last_message']
+    if state_data['attempts'] >= config.ANTI_SPAM_ATTEMPTS:
+        pass
     if elapsed_time < timedelta(minutes=config.ANTI_SPAM_MINUTES):
         await message.answer(
             text=ModeratorText.elapsed_time(elapsed_time),
