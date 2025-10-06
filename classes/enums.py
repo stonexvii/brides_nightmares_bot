@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class ResourcesPath(Enum):
-    AI_PROMPTS_PATH = 'ai_gpt/prompts'
+    AI_PROMPTS_PATH = 'ai_model/prompts'
     TEXT_MESSAGES = 'text'
     AI_MODERATOR = 'ai_moderator'
     AI_WELCOME = 'ai_welcome'

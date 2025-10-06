@@ -3,7 +3,7 @@ from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
 
 import config
-from fsm.states import CallbackState
+from fsm.states import UserDialog
 from keyboards.callback_data import ModeratorCallback
 from text.moderator_text import ModeratorText
 
@@ -12,7 +12,7 @@ callback_router = Router()
 
 @callback_router.callback_query(ModeratorCallback.filter(F.button == 'other'))
 async def other_choice(callback: CallbackQuery, callback_data: ModeratorCallback, bot: Bot, state: FSMContext):
-    await state.set_state(CallbackState.input_data)
+    await state.set_state(UserDialog.input_data)
     await state.set_data(
         {
             'user_tg_id': callback_data.user_tg_id,
